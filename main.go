@@ -1,0 +1,35 @@
+package main
+
+import (
+	"context"
+	"log"
+	"project/compiled"
+	"project/database"
+
+	_ "modernc.org/sqlite"
+)
+
+func main() {
+	ctx := context.Background()
+
+	_, err := database.DB.ConnectSqlite()
+	if err != nil {
+		log.Fatalln("Database connection error:", err.Error())
+	}
+
+	err = database.DB.Query.InsertUser(ctx, compiled.InsertUserParams{
+		Email: "tech@samba.com",
+		Name:  "Samba",
+		Role:  "admin",
+	})
+	if err != nil {
+		log.Fatalln("Error inserting record:", err.Error())
+	}
+
+	res, err := database.DB.Query.GetAllUsers(ctx)
+	if err != nil {
+		log.Fatalln("Error getting record:", err.Error())
+	}
+
+	log.Println("Users:", res)
+}
