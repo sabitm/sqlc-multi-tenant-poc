@@ -6,13 +6,14 @@ import (
 	"project/compiled"
 	"project/database"
 
-	_ "modernc.org/sqlite"
+	// _ "modernc.org/sqlite"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	ctx := context.Background()
 
-	_, err := database.DB.ConnectSqlite()
+	_, err := database.DB.ConnectMySQL()
 	if err != nil {
 		log.Fatalln("Database connection error:", err.Error())
 	}

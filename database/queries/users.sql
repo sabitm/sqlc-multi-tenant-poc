@@ -13,7 +13,7 @@ WHERE email = ? LIMIT 1;
 SELECT COUNT(*) FROM users;
 
 -- name: InsertUser :exec
-INSERT INTO users (email, name, role)
+INSERT IGNORE INTO users (email, name, role)
 VALUES (?, ?, ?);
 
 -- name: UpdateUserRole :exec

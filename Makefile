@@ -11,3 +11,11 @@ test:
 
 build:
 	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+
+mysql-up:
+	docker run -d -p 3306:3306 --name mysql \
+		-e MYSQL_ROOT_PASSWORD=123456 \
+		-e MYSQL_DATABASE=core \
+		-e MYSQL_USER=user \
+		-e MYSQL_PASSWORD=123456 \
+		mysql:latest

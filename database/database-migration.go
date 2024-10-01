@@ -14,11 +14,11 @@ var migrationsFS embed.FS
 
 func createMigrationsTable(db *sql.DB) error {
 	_, err := db.Exec(`
-		CREATE TABLE IF NOT EXISTS migrations (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			version VARCHAR(255) NOT NULL UNIQUE,
-			applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-		)
+    CREATE TABLE IF NOT EXISTS migrations (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      version VARCHAR(255) NOT NULL UNIQUE,
+      applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 	`)
 	return err
 }
