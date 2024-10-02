@@ -21,7 +21,7 @@ func (db *DBStruct) ConnectMySQL() (*WrapperDB, error) {
 		_ = os.Mkdir("./data", 0755)
 	}
 
-	source := "root:%s@/xxxx?parseTime=true"
+	source := "root:%s@/?parseTime=true"
 	source = fmt.Sprintf(source, os.Getenv("MYSQL_ROOT_PASSWORD"))
 
 	dbCurrent, err := sql.Open("mysql", source)
@@ -39,14 +39,6 @@ func (db *DBStruct) ConnectMySQL() (*WrapperDB, error) {
 	dbCurrent.SetMaxOpenConns(10)
 	dbCurrent.SetMaxIdleConns(10)
 
-	err = createMigrationsTable(dbCurrent, "xxxx")
-	if err != nil {
-		panic(err)
-	}
-	err = runMigrations(dbCurrent, "xxxx")
-	if err != nil {
-		panic(err)
-	}
 	db.Query = compiled.New(db.Conn)
 	return db.Conn, nil
 }

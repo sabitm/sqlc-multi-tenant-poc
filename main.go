@@ -6,19 +6,29 @@ import (
 	"project/compiled"
 	"project/database"
 
-	// _ "modernc.org/sqlite"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	ctx := context.WithValue(context.Background(), database.TenantContextKey{}, "tenant1")
-
 	_, err := database.DB.ConnectMySQL()
 	if err != nil {
 		log.Fatalln("Database connection error:", err.Error())
 	}
 
-	err = database.DB.Query.InsertUser(ctx, compiled.InsertUserParams{
+	tenantId := "tenant-1"
+	ctx := context.WithValue(context.Background(), database.TenantContextKey{}, tenantId)
+	dbProcess(ctx, tenantId)
+
+	tenantId = "tenant-2"
+	ctx = context.WithValue(context.Background(), database.TenantContextKey{}, tenantId)
+	dbProcess(ctx, tenantId)
+}
+
+func dbProcess(ctx context.Context, tenantId string) {
+	database.CreateMigrationsTable(database.DB.Conn, tenantId)
+	database.RunMigrations(database.DB.Conn, tenantId)
+
+	err := database.DB.Query.InsertUser(ctx, compiled.InsertUserParams{
 		Email: "tech@samba.com",
 		Name:  "Samba",
 		Role:  "admin",

@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"embed"
 	"fmt"
 	"log"
@@ -12,7 +11,9 @@ import (
 //go:embed migrations/*.sql
 var migrationsFS embed.FS
 
-func createMigrationsTable(db *sql.DB, tenantID string) error {
+func CreateMigrationsTable(db *WrapperDB, tenantID string) error {
+	tenantID = fmt.Sprintf("`%s`", tenantID)
+
 	_, err := db.Exec(fmt.Sprintf(`
     CREATE DATABASE IF NOT EXISTS %s;
 	`, tenantID))
@@ -30,7 +31,9 @@ func createMigrationsTable(db *sql.DB, tenantID string) error {
 	return err
 }
 
-func runMigrations(db *sql.DB, tenantID string) error {
+func RunMigrations(db *WrapperDB, tenantID string) error {
+	tenantID = fmt.Sprintf("`%s`", tenantID)
+
 	migrations, err := migrationsFS.ReadDir("migrations")
 	if err != nil {
 		return err
@@ -64,7 +67,8 @@ func runMigrations(db *sql.DB, tenantID string) error {
 			return err
 		}
 
-		_, err = db.Exec(string(content))
+		contentStr := strings.ReplaceAll(string(content), "xxxx", tenantID)
+		_, err = db.Exec(contentStr)
 		if err != nil {
 			return fmt.Errorf("error executing migration %s: %v", version, err)
 		}
