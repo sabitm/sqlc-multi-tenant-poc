@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), database.TenantContextKey{}, "tenant1")
 
 	_, err := database.DB.ConnectMySQL()
 	if err != nil {

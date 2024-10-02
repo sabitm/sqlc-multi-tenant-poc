@@ -47,6 +47,6 @@ func (db *DBStruct) ConnectMySQL() (*WrapperDB, error) {
 	if err != nil {
 		panic(err)
 	}
-	db.Query = compiled.New(dbCurrent)
+	db.Query = compiled.New(db.Conn)
 	return db.Conn, nil
 }
