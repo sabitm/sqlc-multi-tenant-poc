@@ -12,18 +12,25 @@ import (
 //go:embed migrations/*.sql
 var migrationsFS embed.FS
 
-func createMigrationsTable(db *sql.DB) error {
-	_, err := db.Exec(`
-    CREATE TABLE IF NOT EXISTS migrations (
+func createMigrationsTable(db *sql.DB, tenantID string) error {
+	_, err := db.Exec(fmt.Sprintf(`
+    CREATE DATABASE IF NOT EXISTS %s;
+	`, tenantID))
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec(fmt.Sprintf(`
+    CREATE TABLE IF NOT EXISTS %s.migrations (
       id INT AUTO_INCREMENT PRIMARY KEY,
       version VARCHAR(255) NOT NULL UNIQUE,
       applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-	`)
+	`, tenantID))
 	return err
 }
 
-func runMigrations(db *sql.DB) error {
+func runMigrations(db *sql.DB, tenantID string) error {
 	migrations, err := migrationsFS.ReadDir("migrations")
 	if err != nil {
 		return err
@@ -42,7 +49,8 @@ func runMigrations(db *sql.DB) error {
 		version := strings.TrimSuffix(filename, ".sql")
 
 		var count int
-		err := db.QueryRow("SELECT COUNT(*) FROM migrations WHERE version = ?", version).Scan(&count)
+		countQuery := "SELECT COUNT(*) FROM %s.migrations WHERE version = ?"
+		err := db.QueryRow(fmt.Sprintf(countQuery, tenantID), version).Scan(&count)
 		if err != nil {
 			return err
 		}
@@ -61,7 +69,8 @@ func runMigrations(db *sql.DB) error {
 			return fmt.Errorf("error executing migration %s: %v", version, err)
 		}
 
-		_, err = db.Exec("INSERT INTO migrations (version) VALUES (?)", version)
+		insertQuery := "INSERT INTO %s.migrations (version) VALUES (?)"
+		_, err = db.Exec(fmt.Sprintf(insertQuery, tenantID), version)
 		if err != nil {
 			return err
 		}

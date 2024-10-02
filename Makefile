@@ -15,7 +15,7 @@ build:
 mysql-up:
 	docker run -d -p 3306:3306 --name mysql \
 		-e MYSQL_ROOT_PASSWORD=123456 \
-		-e MYSQL_DATABASE=core \
+		-e MYSQL_DATABASE=xxxx \
 		-e MYSQL_USER=user \
 		-e MYSQL_PASSWORD=123456 \
 		mysql:latest

@@ -1,23 +1,23 @@
 -- name: GetAllUsers :many
-SELECT * FROM users;
+SELECT * FROM xxxx.users;
 
 -- name: GetUserByID :one
-SELECT * FROM users
+SELECT * FROM xxxx.users
 WHERE user_id = ? LIMIT 1;
 
 -- name: GetUserByEmail :one
-SELECT * FROM users
+SELECT * FROM xxxx.users
 WHERE email = ? LIMIT 1;
 
 -- name: GetTotalUser :one
-SELECT COUNT(*) FROM users;
+SELECT COUNT(*) FROM xxxx.users;
 
 -- name: InsertUser :exec
-INSERT IGNORE INTO users (email, name, role)
+INSERT IGNORE INTO xxxx.users (email, name, role)
 VALUES (?, ?, ?);
 
 -- name: UpdateUserRole :exec
-UPDATE users
+UPDATE xxxx.users
 SET
     role = ?
 WHERE
